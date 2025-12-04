@@ -11,7 +11,7 @@ class board :
                 self.set_value(self.cells[i][j],board[i][j])
         if not self.validate_board():
             return False 
-        self.intialize_domain()
+        return self.intialize_domain()
     def set_value(self, cell, value) : 
         if value != 0 :
             cell.value = value
@@ -55,13 +55,13 @@ class board :
                 if self.cells[i][j].value != 0 :
                     self.cells[i][j].domain = [self.cells[i][j].value]
                 else : 
+                    print(f"[Initialization] Processing empty Cell[{i}][{j}] - Initial Domain: {self.cells[i][j].domain}")
                     for cell in self.neighbors(self.cells[i][j]) : 
                         self.cells[i][j].remove_value(cell.value)
-                        if len(self.cells[i][j].domain) == 0 :
-                            return False
-                        if len(self.cells[i][j].domain) == 1 :
-                            if not self.assign_value(self.cells[i][j], self.cells[i][j].domain[0]):
-                                return False
+                    if len(self.cells[i][j].domain) == 0 :
+                        print(f"[Initialization] ERROR: Cell[{i}][{j}] has empty domain!")
+                        return False
+                    print(f"[Initialization] Finished Cell[{i}][{j}] - Final Domain: {self.cells[i][j].domain}")
         return True 
     def neighbors(self,cell) : 
         neighbors = set()
@@ -106,7 +106,7 @@ class board :
         candidates = list(target_cell.domain)
         for value in candidates:
             if self.is_valid(target_cell.row, target_cell.col, value):
-                print(f"[Backtracking] Trying {value} at Cell[{target_cell.row}][{target_cell.col}]")
+                print(f"[Backtracking] Trying {value} at Cell[{target_cell.row}][{target_cell.col}] from domain {target_cell.domain}")
                 backup = copy.deepcopy(self.cells)
                 if self.assign_value(target_cell, value):
                     if self.arc_constraints():
